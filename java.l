@@ -36,6 +36,6 @@ digits		{digit}+
 "{"								{return LCB;}
 "}"								{return RCB;}
 \n             { ++line_num;}
-.              { yyerror("Found \'" + yytext + "\' on line " + to_str(line_num)); exit(1);	}
+.              { yyerror("Found \'" + string(yytext) + "\' on line " + to_string(line_num)); exit(1);	}
 
 %%

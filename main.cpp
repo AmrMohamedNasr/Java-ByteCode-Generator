@@ -1,4 +1,4 @@
-/* main.cc */
+/* main.cpp */
 
 #include "java.h"
 
