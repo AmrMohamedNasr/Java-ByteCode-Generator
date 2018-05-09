@@ -19,12 +19,13 @@ digits		{digit}+
 "false"			{return VFALSE;}
 "boolean"			{return TBOOLEAN;}
 "int"			{return TINT;}
+"float"			{return TFLOAT;}
 "!"				{return BNOT;}
 {letter}({letter}|{digit})*		{yylval.sval = new string(yytext); return ID;}
 "=="|"!="|">"|"<"|">="|"<="		{yylval.sval = new string(yytext); return RELOP;}
 "="								{return ASSIGN;}
-"+"|"-"							{return ADDOP;}
-"*"|"/"							{return MULOP;}
+"+"|"-"							{yylval.cval=yytext[0]; return ADDOP;}
+"*"|"/"							{yylval.cval=yytext[0]; return MULOP;}
 "&&"							{return BAND;}
 "||"							{return BOR;}
 {digits}						{yylval.ival = atoi(yytext);return VINT;}
