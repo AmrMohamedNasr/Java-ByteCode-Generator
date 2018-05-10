@@ -88,6 +88,7 @@ unordered_map<string, string> real_ops = {
 %token KELSE
 %token KFOR
 %token KWHILE
+%token KSYSTEMOUT
 %token VTRUE
 %token VFALSE
 %token TFLOAT
@@ -134,6 +135,7 @@ unordered_map<string, string> real_ops = {
 %type <a_exp_nt> BTERM
 %type <b_exp_nt> BSIMPLE_EXPRESSION
 %type <b_exp_nt> BOOLEAN_EXPRESSION
+%type <basic_nt> SYSTEM_OUT
 
 %%
 // the first rule defined is the highest-level rule, which in our
@@ -183,7 +185,32 @@ STATEMENT:
   |
   ASSIGNMENT {$$.code = $1.code;$$.next = $1.next;}
   |
-  FOR {$$.code = $1.code;$$.next = $1.next;};
+  FOR {$$.code = $1.code;$$.next = $1.next;}
+  |
+  SYSTEM_OUT {$$.code = $1.code; $$.next = $1.next;};
+SYSTEM_OUT:
+	KSYSTEMOUT
+	LPAR
+	BOOLEAN_EXPRESSION
+	RPAR
+	SEMICOL
+	{
+		if ($3.type != TYPE::ERROR) {
+	        $$.next = new vector<string*>();
+	        $$.code = new vector<string*>();
+	        string * s = new string("getstatic java/lang/System/out Ljava/io/PrintStream;");
+	        $$.code->push_back(s);
+	        add_to_list($$.code, {$3.code});
+	        perform_label_adding($$.code, &$3.next);
+	        string * f = new string(string("invokevirtual   java/io/PrintStream/println(") 
+				+ ($3.type == TYPE::FLOAT ? "F" : "I")
+			 	+")V");
+	        $$.code->push_back(f);
+	    } else {
+	      $$.code = nullptr;
+	      $$.next = nullptr;
+	    }
+	};
 DECLARTION:
   PRIMITY_TYPE
   ID
