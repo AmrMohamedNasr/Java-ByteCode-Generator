@@ -1,0 +1,2 @@
+java -jar jasmin.jar prog.j
+java prog.class
