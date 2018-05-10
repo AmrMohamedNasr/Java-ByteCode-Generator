@@ -13,5 +13,5 @@ using namespace std;
 #include <unordered_map>
 #include <climits>
 #include "label.h"
-enum class TYPE {INT, FLOAT, BOOL, ERROR};
+enum class TYPE {INT , FLOAT, BOOL, ERROR};
 #endif

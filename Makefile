@@ -8,4 +8,4 @@ all: java.y java.l main.cpp java.h label.h label.cpp
 	mkdir ./build -p
 	mv java ./build/java
 clean:
-	rm ./build -r
+	rm ./build/java

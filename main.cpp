@@ -8,10 +8,10 @@ extern "C" int yyparse();
 
 int main(int, char**) {
   // open a file handle to a particular file:
-  FILE *myfile = fopen("in.snazzle", "r");
+  FILE *myfile = fopen("test.java", "r");
   // make sure it's valid:
   if (!myfile) {
-    cout << "I can't open a.snazzle.file!" << endl;
+    cout << "I can't open a java file!" << endl;
     return -1;
   }
   // set lex to read from it instead of defaulting to STDIN:

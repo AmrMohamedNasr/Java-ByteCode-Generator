@@ -1,7 +1,7 @@
 #include "label.h"
 
 label::label() {
-  this->label_name = to_string(label::label_char) + to_string(label::label_num);
+  this->label_name = label::label_char + to_string(label::label_num);
   if (label_num == UINT_MAX) {
     label::label_char++;
   }
