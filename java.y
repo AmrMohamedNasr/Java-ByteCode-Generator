@@ -10,13 +10,13 @@ uint symbol_mem = 1;
 uint label::label_num = 0;
 char label::label_char = 'a';
 unordered_map<string, pair<uint, TYPE>> symbol_table;
-unordered_map<uint, string *> memory_table;
+unordered_map<uint, string> memory_table;
 ofstream *parserOut;
 void back_patch(vector<string *> **list, string m);
 bool need_label(vector<string *> *list);
 void add_to_list(vector<string *> *dest, initializer_list<vector<string *> *> list);
 void clear_scope(uint before_scope_mem);
-void add_entry(string *s, TYPE type);
+void add_entry(string s, TYPE type);
 bool hasId(string s);
 TYPE getType(string s);
 uint getMemoryPlace(string s);
@@ -195,12 +195,13 @@ DECLARTION:
       yyerror("Variable " + (*$2) + " is already defined for this scope");
     } else {
       $$.next = nullptr;
-      add_entry($2, $1);
+      add_entry(*$2, $1);
       $$.code = new vector<string *>();
       string k = type_map[$1];
       $$.code->push_back(new string(k + "const_0"));
       $$.code->push_back(new string(k + "store " + to_string(getMemoryPlace(*$2))));
     }
+    delete $2;
   };
 PRIMITY_TYPE:
   TINT {$$ = TYPE::INT;}
@@ -264,13 +265,15 @@ BOOLEAN_CONDITION:
       } else {
         $$.next = new vector<string*>();
         $$.code = new vector<string*>();
-        add_to_list($$.code, {$1.code});
         string * s = new string("ifeq ");
         $$.next->push_back(s);
         add_to_list($$.code, {$1.code});
         perform_label_adding($$.code, &$1.next);
         $$.code->push_back(s);
       }
+    } else {
+      $$.code = nullptr;
+      $$.next = nullptr;
     }
   };
 ASSIGNMENT_OPTIONAL:
@@ -641,15 +644,14 @@ void add_to_list(vector<string *> *dest, initializer_list<vector<string *> *> li
 void clear_scope(uint before_scope_mem) {
   while (symbol_mem > before_scope_mem) {
     symbol_mem--;
-    string * s = memory_table[symbol_mem];
-    symbol_table.erase(symbol_table.find(*s));
+    string s = memory_table[symbol_mem];
+    symbol_table.erase(symbol_table.find(s));
     memory_table.erase(memory_table.find(symbol_mem));
-    delete s;
   }
 }
-void add_entry(string *s,  TYPE type) {
-  if (!hasId(*s)) {
-    symbol_table[*s] = pair<uint, TYPE>(symbol_mem, type);
+void add_entry(string s,  TYPE type) {
+  if (!hasId(s)) {
+    symbol_table[s] = pair<uint, TYPE>(symbol_mem, type);
     memory_table[symbol_mem] = s;
     symbol_mem++;
   }
