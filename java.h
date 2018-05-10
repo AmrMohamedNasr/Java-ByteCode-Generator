@@ -15,5 +15,6 @@ using namespace std;
 #include "label.h"
 #include "grammar_structs.h"
 #include "types.h"
+#include <fstream>
 
 #endif

@@ -11,7 +11,7 @@ uint label::label_num = 0;
 char label::label_char = 'a';
 unordered_map<string, pair<uint, TYPE>> symbol_table;
 unordered_map<uint, string *> memory_table;
-
+ofstream *parserOut;
 void back_patch(vector<string *> **list, string m);
 bool need_label(vector<string *> *list);
 void add_to_list(vector<string *> *dest, initializer_list<vector<string *> *> list);
@@ -606,9 +606,6 @@ BOOLEAN_EXPRESSION:
 
 void yyerror(const string s) {
   cout << "Parse error on line " << line_num << "!  Message: " << s << endl;
-  //- might as well halt now:
-  //- no
-  //exit(-1);
 }
 
 void back_patch(vector<string *> **list, string m) {
@@ -627,7 +624,8 @@ void add_to_list(vector<string *> *dest, initializer_list<vector<string *> *> li
   } else {
     for (auto i : list) {
       if (i != nullptr) {
-        dest->insert(end(*dest), begin(*i), end(*i));  
+        dest->insert(end(*dest), begin(*i), end(*i));
+        delete i;
       }
     }
   }
@@ -671,7 +669,7 @@ void print_code(vector<string *> * code) {
     return;
   } else {
     for (unsigned i = 0; i < code->size(); i++) {
-      cout << (*((*code)[i])) << endl;
+      (*parserOut) << (*((*code)[i])) << endl;
     }
   }
 }
