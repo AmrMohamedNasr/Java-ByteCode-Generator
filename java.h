@@ -13,5 +13,7 @@ using namespace std;
 #include <unordered_map>
 #include <climits>
 #include "label.h"
-enum class TYPE {INT , FLOAT, BOOL, ERROR};
+#include "grammar_structs.h"
+#include "types.h"
+
 #endif
