@@ -29,12 +29,20 @@ void process_arith_op(A_exp_nt * par, A_exp_nt * a, char op, A_exp_nt *b);
 void yyerror(const string);
 
 /** Maps used for quick code generation **/
+struct TypeClassHash
+{
+    template <typename T>
+    std::size_t operator()(T t) const
+    {
+      return static_cast<std::size_t>(t);
+    }
+};
 
-unordered_map<TYPE, string> type_map = {
+unordered_map<TYPE, string, TypeClassHash> type_map = {
   pair<TYPE, string>(TYPE::INT, "i"), pair<TYPE, string>(TYPE::BOOL, "i"), pair<TYPE, string>(TYPE::FLOAT, "f")
 };
 
-unordered_map<TYPE, string> type_tostr_map = {
+unordered_map<TYPE, string, TypeClassHash> type_tostr_map = {
   pair<TYPE, string>(TYPE::INT, "integer"), pair<TYPE, string>(TYPE::BOOL, "boolean"), pair<TYPE, string>(TYPE::FLOAT, "float")
 };
 

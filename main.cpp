@@ -14,7 +14,7 @@ int main(int, char**) {
   cin >> in;
   cout << "Enter your output file : " << endl;
   cin >> out;
-  FILE *myfile = fopen("test.java", "r");
+  FILE *myfile = fopen(in, "r");
   // make sure it's valid:
   if (!myfile) {
     cout << "I can't open the input file!" << endl;
