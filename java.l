@@ -17,6 +17,7 @@ digits		{digit}+
 "for"  			{return KFOR; }
 "true"			{return VTRUE;}
 "false"			{return VFALSE;}
+"System.out.println" {return KSYSTEMOUT;}
 "boolean"			{return TBOOLEAN;}
 "int"			{return TINT;}
 "float"			{return TFLOAT;}
