@@ -1,0 +1,31 @@
+int i;
+int j;
+int k;
+i = 0;
+j = 0;
+k = 0;
+int n;
+n = 10;
+int x;
+x = 0;
+while ( j < n ) {
+x = x + 1;
+j = j + 1;
+}
+
+if ( n == x ) {
+i = 10;
+} else {
+k = 10;
+}
+
+x = x * 10;
+j = 10;
+k = j * 10;
+
+if ( x == j ) {
+i = x;
+} else {
+i = 10;
+}
+
