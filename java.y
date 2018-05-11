@@ -9,6 +9,7 @@ extern int line_num;
 uint symbol_mem = 1;
 uint label::label_num = 0;
 char label::label_char = 'a';
+bool error_flag = false;
 unordered_map<string, pair<uint, TYPE>> symbol_table;
 unordered_map<uint, string> memory_table;
 ofstream *parserOut;
@@ -137,6 +138,9 @@ unordered_map<string, string> real_ops = {
 %type <b_exp_nt> BOOLEAN_EXPRESSION
 %type <basic_nt> SYSTEM_OUT
 
+%precedence KIF
+%precedence KELSE
+
 %%
 // the first rule defined is the highest-level rule, which in our
 // case is just the concept of a whole "snazzle file":
@@ -229,7 +233,24 @@ DECLARTION:
       $$.code->push_back(new string(k + "store " + to_string(getMemoryPlace(*$2))));
     }
     delete $2;
-  };
+   }
+   |
+	PRIMITY_TYPE
+	ID
+	ASSIGN
+	BOOLEAN_EXPRESSION
+	SEMICOL {
+	if (hasId(*($2))) {
+      $$.code = nullptr;
+      $$.next = nullptr;
+      yyerror("Variable " + (*$2) + " is already defined for this scope");
+    } else {
+      $$.next = nullptr;
+      add_entry(*$2, $1);
+      process_assignment(*$2, &$$, &$4);
+    }
+    delete $2;
+	};
 PRIMITY_TYPE:
   TINT {$$ = TYPE::INT;}
   |
@@ -252,6 +273,21 @@ WHILE:
     $$.code->push_back(new string("goto " + begin.get_name()));
   };
 IF:
+  KIF
+  LPAR
+  BOOLEAN_CONDITION
+  RPAR
+  BLOCK
+  {
+    label y;
+    back_patch(&$3.next, y.get_name());
+    $$.next = new vector<string *>();
+    add_to_list($$.next, {$5.next});
+    $$.code = new vector<string *>();
+    add_to_list($$.code, {$3.code, $5.code});
+    add_label_to_code($$.code, y);
+  }
+  |
   KIF
   LPAR
   BOOLEAN_CONDITION
@@ -643,7 +679,8 @@ BOOLEAN_EXPRESSION:
 %%
 
 void yyerror(const string s) {
-  cout << "Parse error on line " << line_num << "!  Message: " << s << endl;
+	error_flag = true;
+  	cout << "Parse error on line " << line_num << "!  Message: " << s << endl;
 }
 
 void back_patch(vector<string *> **list, string m) {
@@ -702,7 +739,7 @@ uint getMemoryPlace(string s) {
 }
 
 void print_code(vector<string *> * code) {
-  if (code == nullptr) {
+  if (code == nullptr || error_flag) {
     return;
   } else {
     for (unsigned i = 0; i < code->size(); i++) {
